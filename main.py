@@ -29,6 +29,7 @@ def get_episode_urls(api):
 test_script_html = requests.get(test_script, headers=headers)
 soup = BeautifulSoup(test_script_html.content, 'html.parser')
 
+# TODO:
 def grab_script(soup):
     # print(soup.find_all('table', {'class': 'headersthemes'}))
     for line in soup.find_all('table', {'class': 'headerscontent'}):
@@ -41,6 +42,20 @@ def grab_script(soup):
            else:
                continue
 
+def grab_scripts(episode_list):
+    for episode in episode_list:
+        script_html = requests.get(episode)
+        soup = BeautifulSoup(script_html.content, 'html.parser')
+        for line in soup.find_all('table', {'class': 'headerscontent'}):
+            for x in line.find_all('td', {'class': 'DLborderBOT DLborderRIGHT'}):
+                if x.text.replace('\n', '') != '':
+                    characters.append(x.text.replace('\n', ''))
+                    # print(x.find_next_sibling('td'))
+                    lines.append(x.find_next_sibling('td').text.replace('\n', ''))
+                else:
+                    continue
+
 get_episode_urls(api)
-print(episode_urls)
-# grab_script(soup)
+grab_scripts(episode_urls)
+print(len(characters))
+print(len(lines))
